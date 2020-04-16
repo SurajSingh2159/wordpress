@@ -126,6 +126,27 @@ class Elementskit_Widget_Nav_Menu extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'elementskit_hamburger_icon',
+			[
+				'label' => __( 'Hamburger Icon', 'elementskit' ),
+				'type' => Controls_Manager::ICONS,
+			]
+		);
+
+		$this->add_control(
+			'elementskit_responsive_breakpoint',
+			[
+				'label' => __( 'Responsive Breakpoint', 'elementskit' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'ekit_menu_responsive_tablet',
+				'options' => [
+					'ekit_menu_responsive_tablet'  => __( 'Tablet', 'elementskit' ),
+					'ekit_menu_responsive_mobile' => __( 'Mobile', 'elementskit' ),
+				],
+			]
+		);
+
         $this->add_responsive_control(
 			'elementskit_menubar_height',
 			[
@@ -237,7 +258,7 @@ class Elementskit_Widget_Nav_Menu extends Widget_Base {
 				'label' => esc_html__( 'Width', 'elementskit' ),
 				'type' => Controls_Manager::SLIDER,
                 'size_units' => [ 'px', '%' ],
-                'devices' => ['tablet'],
+                'devices' => ['tablet', 'mobile'],
 				'range' => [
 					'px' => [
 						'min' => 350,
@@ -1293,7 +1314,19 @@ class Elementskit_Widget_Nav_Menu extends Widget_Base {
     }
 
 	protected function render( ) {
-        echo '<div class="ekit-wid-con" >';
+		$settings = $this->get_settings_for_display();
+		$hamburger_icon_value = '';
+		$hamburger_icon_type = '';
+		if ($settings['elementskit_hamburger_icon'] != '' && $settings['elementskit_hamburger_icon']) {
+			if ($settings['elementskit_hamburger_icon']['library'] !== 'svg') {
+				$hamburger_icon_value = esc_attr($settings['elementskit_hamburger_icon']['value']);
+				$hamburger_icon_type = esc_attr('icon');
+			} else {
+				$hamburger_icon_value = esc_url($settings['elementskit_hamburger_icon']['value']['url']);
+				$hamburger_icon_type = esc_attr('url');
+			}
+		}
+        echo '<div class="ekit-wid-con '.$settings['elementskit_responsive_breakpoint'].'" data-hamburger-icon="'.$hamburger_icon_value.'" data-hamburger-icon-type="'.$hamburger_icon_type.'">';
             $this->render_raw();
         echo '</div>';
     }

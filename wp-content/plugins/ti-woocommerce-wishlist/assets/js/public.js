@@ -396,7 +396,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     $(document).on('show_variation', '.variations_form', function (a, b, d) {
       var e = $(this).find('.tinvwl_add_to_wishlist_button');
 
-      if (e.length) {
+      if (e.length && e.attr('data-tinv-wl-list')) {
         var f = JSON.parse(e.attr('data-tinv-wl-list')),
             j = false,
             g = '1' == window.tinvwl_add_to_wishlist['simple_flow'];
@@ -417,7 +417,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (hash_key === e.originalEvent.key && localStorage.getItem(hash_key) !== sessionStorage.getItem(hash_key)) {
         set_hash(localStorage.getItem(hash_key));
       }
-    }); // Get wishlist data from REST API.
+    });
+
+    var addParams = function addParams(url, data) {
+      if (!$.isEmptyObject(data)) {
+        url += (url.indexOf('?') >= 0 ? '&' : '?') + $.param(data);
+      }
+
+      return url;
+    }; // Get wishlist data from REST API.
+
 
     var tinvwl_products = [],
         tinvwl_counter = false;
@@ -434,7 +443,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           'ids': tinvwl_products,
           'counter': tinvwl_counter
         };
-        var endpoint = wpApiSettings.root + 'wishlist/v1/products?' + $.param(params);
+        var endpoint = addParams(wpApiSettings.root + 'wishlist/v1/products', params);
         $.ajax({
           url: endpoint,
           method: 'GET',
